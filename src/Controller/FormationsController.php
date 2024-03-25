@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Formation;
 use App\Repository\CategorieRepository;
 use App\Repository\FormationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -93,7 +94,18 @@ class FormationsController extends AbstractController {
         return $this->render(self::FORMATION, [
             'formation' => $formation
         ]);        
-    }   
+    }
+    
+    /**
+     * @Route("/formations/delete/{id}", name="formations.delete", methods={"POST", "DELETE"})
+     */
+    public function delete(Request $request, Formation $formation): Response{
+    $entityManager = $this->getDoctrine()->getManager();
+    $entityManager->remove($formation);
+    $entityManager->flush();
+    return $this->redirectToRoute('formations');
+    }
+    
     
 }
 //empty new line

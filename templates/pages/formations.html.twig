@@ -81,6 +81,12 @@
                             </a>
                         {% endif %}
                     </td>
+                    <td class="text-center">
+                        <form action="{{ path('formations.delete', {id: formation.id}) }}" method="post" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette formation ?')">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </td> 
                 </tr>
             {% endfor %}
         </tbody>
