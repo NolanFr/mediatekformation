@@ -7,11 +7,12 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
  * @ORM\Entity(repositoryClass=FormationRepository::class)
  */
-class Formation
+class Formation 
 {
     /**
      * Début de chemin vers les images
@@ -169,4 +170,5 @@ class Formation
 
         return $this;
     }
+    
 }

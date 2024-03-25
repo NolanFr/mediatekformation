@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Formation;
+use App\Form\FormationType;
+use App\Entity\Categorie;
 use App\Repository\CategorieRepository;
 use App\Repository\FormationRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -97,13 +99,36 @@ class FormationsController extends AbstractController {
     }
     
     /**
-     * @Route("/formations/delete/{id}", name="formations.delete", methods={"POST", "DELETE"})
+     * @Route("/formations/delete/{id}", name="formations.delete", methods={"POST"})
      */
     public function delete(Request $request, Formation $formation): Response{
     $entityManager = $this->getDoctrine()->getManager();
     $entityManager->remove($formation);
     $entityManager->flush();
     return $this->redirectToRoute('formations');
+    }
+    
+    /**
+     * @Route("/formations/new", name="formations.new", methods={"GET", "POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $formation = new Formation();
+        $form = $this->createForm(FormationType::class, $formation);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($formation);
+            $entityManager->flush();
+
+            // Rediriger vers la page des formations après l'ajout d'une nouvelle formation
+            return $this->redirectToRoute('formations');
+        }
+
+        return $this->render('pages/formulaire.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
     
     
