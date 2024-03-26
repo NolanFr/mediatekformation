@@ -119,4 +119,12 @@ class FormationRepository extends ServiceEntityRepository
                 ->getResult();        
     }
     
+    public function findById($id): ?Formation
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

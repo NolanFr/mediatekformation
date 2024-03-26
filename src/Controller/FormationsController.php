@@ -11,6 +11,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Doctrine\ORM\EntityManagerInterface;
 /**
  * Controleur des formations
  *
@@ -128,6 +131,42 @@ class FormationsController extends AbstractController {
 
         return $this->render('pages/formulaire.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+    
+    /**
+    * @Route("/formation/modifier/{id}", name="modifierFormation")
+    */
+    public function modifierFormation(Request $request,EntityManagerInterface $entityManager, FormationRepository $formationRepository, $id){
+        $formation = $formationRepository->findById($id);
+        $form = $this->createForm(FormationType::class, $formation);
+        $form->add('published_at', DateType::class, [
+                'label' => 'Date de publication',
+                'widget' => 'single_text',
+                'html5' => false,
+                'format' => 'yyyy-MM-dd',
+                'data' => new \DateTime(), // Valeur par défaut
+                'required' => false, // Rendre le champ non requis
+                'disabled' => true,
+        ]);
+
+            // Désactiver le champ 'video_id'
+        $form->add('video_id', FileType::class, [
+                'label' => 'Vidéo (non modifiable)',
+                'required' => false,
+                'mapped' => false,
+                'attr' => ['accept' => 'video/mp4,video/x-matroska'],
+                'disabled' => true,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($formation);
+            $entityManager->flush();
+            return $this->redirectToRoute('formations');
+        }
+        return $this->render('pages/formulaire.html.twig', [
+                'form' => $form->createView(),
         ]);
     }
     
