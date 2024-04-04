@@ -39,6 +39,12 @@ class CategorieRepository extends ServiceEntityRepository
         }
     }
     
+    public function hasNoFormation(Categorie $categorie): bool
+    {
+        $formations = $categorie->getFormations();
+        return $formations->isEmpty();
+    }
+    
     /**
      * Retourne la liste des catégories des formations d'une playlist
      * @param type $idPlaylist
@@ -54,5 +60,20 @@ class CategorieRepository extends ServiceEntityRepository
                 ->getQuery()
                 ->getResult();        
     }    
+    
+     public function findAllOrderBy($champ, $ordre, $table=""): array{
+        if($table==""){
+            return $this->createQueryBuilder('f')
+                    ->orderBy('f.'.$champ, $ordre)
+                    ->getQuery()
+                    ->getResult();
+        }else{
+            return $this->createQueryBuilder('f')
+                    ->join('f.'.$table, 't')
+                    ->orderBy('t.'.$champ, $ordre)
+                    ->getQuery()
+                    ->getResult();            
+        }
+    }
 
 }
